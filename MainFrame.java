@@ -30,6 +30,7 @@ public class MainFrame extends JFrame
     private JCheckBoxMenuItem showAxisMenuItem;
     private JCheckBoxMenuItem showMarkersMenuItem;
     private JCheckBoxMenuItem showSomeMenuItem;
+    private JCheckBoxMenuItem showExtraMenuItem;
     private GraphicsDisplay display = new GraphicsDisplay();
     private boolean fileLoaded = false;
     public MainFrame()
@@ -57,7 +58,7 @@ public class MainFrame extends JFrame
             }
         };
         fileMenu.add(openGraphicsAction);
-        Action openGraphicsAction1 = new AbstractAction("Открыть файл с графиком 2")
+        Action openGraphicsAction1 = new AbstractAction("Открыть текстовый файл с графиком")
         {
             public void actionPerformed(ActionEvent event)
             {
@@ -103,6 +104,16 @@ public class MainFrame extends JFrame
         showSomeMenuItem = new JCheckBoxMenuItem(showSomeAction);
         graphicsMenu.add(showSomeMenuItem);
         showSomeMenuItem.setSelected(false);
+        Action showExtraAction = new AbstractAction("Показывать замкнутые области")
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                display.setShowExtra(showExtraMenuItem.isSelected());
+            }
+        };
+        showExtraMenuItem = new JCheckBoxMenuItem(showExtraAction);
+        graphicsMenu.add(showExtraMenuItem);
+        showExtraMenuItem.setSelected(false);
         graphicsMenu.addMenuListener(new GraphicsMenuListener());
         getContentPane().add(display, BorderLayout.CENTER);
     }
@@ -193,6 +204,7 @@ public class MainFrame extends JFrame
             showAxisMenuItem.setEnabled(fileLoaded);
             showMarkersMenuItem.setEnabled(fileLoaded);
             showSomeMenuItem.setEnabled(fileLoaded);
+            showExtraMenuItem.setEnabled(fileLoaded);
         }
         public void menuDeselected(MenuEvent e)
         {
