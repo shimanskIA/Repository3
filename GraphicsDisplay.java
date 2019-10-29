@@ -8,15 +8,12 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import javax.swing.JPanel;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+
 
 @SuppressWarnings("serial")
 public class GraphicsDisplay extends JPanel {
@@ -25,6 +22,7 @@ public class GraphicsDisplay extends JPanel {
     private boolean showMarkers = true;
     private boolean showSome = false;
     private boolean showExtra = false;
+    private boolean showDegree = false;
     private double minX;
     private double maxX;
     private double minY;
@@ -35,7 +33,9 @@ public class GraphicsDisplay extends JPanel {
     private BasicStroke markerStroke;
     private BasicStroke extraStroke;
     private Font axisFont;
-    private DecimalFormat formatter =  (DecimalFormat)NumberFormat.getInstance();
+    private DecimalFormat formatter = (DecimalFormat)NumberFormat.getInstance();
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
 
     public GraphicsDisplay() {
         setBackground(Color.WHITE);
@@ -92,7 +92,11 @@ public class GraphicsDisplay extends JPanel {
         this.showAxis = showAxis;
         repaint();
     }
-
+    public void setShowDegree(boolean showDegree)
+    {
+        this.showDegree = showDegree;
+        repaint();
+    }
     public void setShowMarkers(boolean showMarkers) {
         this.showMarkers = showMarkers;
         repaint();
@@ -140,17 +144,28 @@ public class GraphicsDisplay extends JPanel {
         Color oldColor = canvas.getColor();
         Paint oldPaint = canvas.getPaint();
         Font oldFont = canvas.getFont();
-        if (showAxis) paintAxis(canvas);
-        paintGraphics(canvas);
-        if (showMarkers) paintMarkers(canvas);
-        if (showSome) paintSome(canvas);
-        if (showExtra) paintExtra(canvas);
+        if (showDegree)
+        {
+            rotateGraphics(canvas);
+            if (showAxis) paintAxis(canvas);
+            paintGraphics(canvas);
+            if (showMarkers) paintMarkers(canvas);
+            if (showSome) paintSome(canvas);
+            if (showExtra) paintExtra(canvas);
+        }
+        else
+        {
+            if (showAxis) paintAxis(canvas);
+            paintGraphics(canvas);
+            if (showMarkers) paintMarkers(canvas);
+            if (showSome) paintSome(canvas);
+            if (showExtra) paintExtra(canvas);
+        }
         canvas.setFont(oldFont);
         canvas.setPaint(oldPaint);
         canvas.setColor(oldColor);
         canvas.setStroke(oldStroke);
     }
-
     void paintGraphics(Graphics2D canvas) {
         canvas.setStroke(graphicsStroke);
         canvas.setColor(Color.RED);
@@ -322,11 +337,16 @@ public class GraphicsDisplay extends JPanel {
             canvas.drawString("x", (float) (labelPos.getX() - bounds.getWidth() - 10), (float) (labelPos.getY() + bounds.getY()));
         }
     }
-
     protected Point2D.Double xyToPoint(double x, double y) {
         double deltaX = x - minX;
         double deltaY = maxY - y;
         return new Point2D.Double(deltaX * scale, deltaY * scale);
+    }
+    protected void rotateGraphics(Graphics2D canvas)
+    {
+        AffineTransform transform = new AffineTransform();
+        transform.rotate((Math.PI / 2),   WIDTH + maxX / 2, HEIGHT + maxY / 2);
+        canvas.setTransform(transform);
     }
 
     protected Point2D.Double shiftPoint(Point2D.Double src, double deltaX, double deltaY) {

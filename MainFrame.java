@@ -31,6 +31,7 @@ public class MainFrame extends JFrame
     private JCheckBoxMenuItem showMarkersMenuItem;
     private JCheckBoxMenuItem showSomeMenuItem;
     private JCheckBoxMenuItem showExtraMenuItem;
+    private JCheckBoxMenuItem showDegreedMenuItem;
     private GraphicsDisplay display = new GraphicsDisplay();
     private boolean fileLoaded = false;
     public MainFrame()
@@ -114,6 +115,16 @@ public class MainFrame extends JFrame
         showExtraMenuItem = new JCheckBoxMenuItem(showExtraAction);
         graphicsMenu.add(showExtraMenuItem);
         showExtraMenuItem.setSelected(false);
+        Action showDegreeAction = new AbstractAction("Перевернуть график на 90о")
+        {
+            public void actionPerformed(ActionEvent event)
+            {
+                display.setShowDegree(showDegreedMenuItem.isSelected());
+            }
+        };
+        showDegreedMenuItem = new JCheckBoxMenuItem(showDegreeAction);
+        graphicsMenu.add(showDegreedMenuItem);
+        showDegreedMenuItem.setSelected(false);
         graphicsMenu.addMenuListener(new GraphicsMenuListener());
         getContentPane().add(display, BorderLayout.CENTER);
     }
@@ -205,6 +216,7 @@ public class MainFrame extends JFrame
             showMarkersMenuItem.setEnabled(fileLoaded);
             showSomeMenuItem.setEnabled(fileLoaded);
             showExtraMenuItem.setEnabled(fileLoaded);
+            showDegreedMenuItem.setEnabled(fileLoaded);
         }
         public void menuDeselected(MenuEvent e)
         {
